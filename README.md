@@ -129,12 +129,6 @@ target/debug/donut-360
 * [ ] Escolha de tamanho do donut e resolução
 * [ ] Versão colorida com ANSI RGB
 
----
-
-## 🤝 **Contribuições**
-
-Sinta-se livre para abrir issues, criar PRs ou sugerir ideias para novas features.
-
 ## 🖼️ Preview
 
 <img src="https://github.com/user-attachments/assets/6cf20e63-bcfa-4eac-a5f4-80c6fab649e1" width="300" />
