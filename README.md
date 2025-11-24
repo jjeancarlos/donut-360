@@ -116,7 +116,7 @@ cargo build --release
 O binário final ficará em:
 
 ```
-target/release/donut-360
+target/debug/donut-360
 ```
 
 ---
