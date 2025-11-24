@@ -12,23 +12,24 @@ Esta versão foi totalmente reescrita em Rust, com melhorias modernas como:
 
 ---
 
-## 📦 **Como rodar**
+## 🛠️ Instalação e Uso
 
-Certifique-se de ter o Rust instalado:
+### Pré-requisitos
+Você precisa ter **Rust** e **Cargo** instalados na sua máquina.
 
-```bash
-rustup update
-```
-
-Execute o projeto:
-
-```bash
-cargo run
-```
-
-O donut aparecerá girando no terminal.
-
----
+### Rodando o projeto
+1.  Clone este repositório:
+    ```bash
+    git clone https://github.com/jjeancarlos/donut-360.git
+    ````
+2. Entre no diretório do projeto:
+    ```bash
+    cd donut-360
+    ```
+3.  Execute o projeto no modo **release** (recomendado para FPS suave):
+    ```bash
+    cargo run --release
+    ```
 
 ## 🕹️ **Controles**
 
