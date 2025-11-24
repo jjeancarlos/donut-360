@@ -1,84 +1,39 @@
-use std::{f32::consts::PI, thread, time::Duration};
+mod renderer;
+mod input;
+mod state;
+
+use renderer::Renderer;
+use state::Buffers;
+use input::{Controls, spawn_input_thread};
+
+use std::sync::atomic::Ordering;
+use std::sync::Arc;
+use std::time::Duration;
 
 fn main() {
-    let mut a: f32 = 0.0;
-    let mut b: f32 = 0.0;
+    // Initialize shared structures
+    let buffers = Buffers::new();
+    let controls = Controls::new();
 
-    // Buffers
-    let mut z_buffer = [0.0_f32; 1760];
-    let mut char_buffer = [' '; 1760];
+    // Spawn input thread
+    spawn_input_thread(&controls);
 
-    print!("\x1b[2J"); // Clear terminal
+    // Copy reset atomic into renderer (so renderer can consume resets)
+    let reset_flag = Arc::clone(&controls.reset);
 
-    loop {
-        // Reset dos buffers
-        for i in 0..1760 {
-            char_buffer[i] = ' ';
-            z_buffer[i] = 0.0;
-        }
+    // Create renderer and run it in main thread
+    let mut renderer = Renderer::new(buffers, Arc::clone(&controls.paused), Arc::clone(&controls.quit));
 
-        let mut j = 0.0;
-        while j < 2.0 * PI {
-            let mut i_val = 0.0;
+    // Target ~30 FPS -> frame ms ~33
+    let target_frame_ms = 33;
 
-            while i_val < 2.0 * PI {
-                let c = i_val.sin();
-                let d = j.cos();
-                let e = a.sin();
-                let f = j.sin();
-                let g = a.cos();
-                let h = d + 2.0;
-                let d_val = 1.0 / (c * h * e + f * g + 5.0);
-                let l = i_val.cos();
-                let m = b.cos();
-                let n = b.sin();
-                let t = c * h * g - f * e;
+    // show_fps true to display FPS and controls
+    renderer.run(target_frame_ms, true, reset_flag);
 
-                let x = (40.0 + 30.0 * d_val * (l * h * m - t * n)) as isize;
-                let y = (12.0 + 15.0 * d_val * (l * h * n + t * m)) as isize;
-                let o = x + 80 * y;
+    // When quit is triggered, exit
+    // ensure we set quit true to input thread if not already
+    controls.quit.store(true, Ordering::SeqCst);
 
-                if y >= 0 && y < 22 && x >= 0 && x < 80 {
-                    let n_val = (8.0
-                        * ((f * e - c * d * g) * m
-                            - c * d * e
-                            - f * g
-                            - l * d * n)) as isize;
-
-                    if o >= 0 && o < 1760 && d_val > z_buffer[o as usize] {
-                        z_buffer[o as usize] = d_val;
-
-                        const CHARS: &[u8] = b".,-~:;=!*#$@";
-                        let idx = if n_val > 0 { n_val as usize } else { 0 };
-
-                        char_buffer[o as usize] =
-                            CHARS[idx.min(CHARS.len() - 1)] as char;
-                    }
-                }
-
-                i_val += 0.02;
-            }
-            j += 0.07;
-        }
-
-        // Move cursor to home
-        print!("\x1b[H");
-
-        // Impressão + rotação a cada char (igual ao C)
-        for k in 0..1760 {
-            let c = char_buffer[k];
-
-            if k % 80 == 79 {
-                print!("\n");
-            } else {
-                print!("{}", c);
-            }
-
-            // Incrementos originais
-            a += 0.00004;
-            b += 0.00002;
-        }
-
-        thread::sleep(Duration::from_millis(30));
-    }
+    // small delay to allow cleanup
+    std::thread::sleep(Duration::from_millis(50));
 }
