@@ -102,7 +102,7 @@ impl Renderer {
                 let t = c * h * g - f * e;
 
                 let x = (40.0 + 30.0 * d_val * (l * h * m - t * n)) as isize;
-                let y = (12.0 + 15.0 * d_val * (l * h * n + t * m)) as isize;
+                let y = (12.0 + 14.0 * d_val * (l * h * n + t * m)) as isize;
                 let o = x + SCREEN_W as isize * y;
 
                 if y >= 0 && y < SCREEN_H as isize && x >= 0 && x < SCREEN_W as isize {
